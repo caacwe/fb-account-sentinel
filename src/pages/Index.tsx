@@ -138,7 +138,7 @@ const Index = () => {
         </Alert>
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div className="mb-6">
           {/* Input Section */}
           <Card className="p-5 border-border">
             <div className="mb-4">
@@ -193,28 +193,6 @@ const Index = () => {
                 <Progress value={progress} className="h-2" />
               </div>
             )}
-          </Card>
-
-          {/* Quick Stats */}
-          <Card className="p-5 border-border bg-primary/5">
-            <div className="mb-4">
-              <h2 className="text-sm font-medium text-foreground mb-1">统计概览</h2>
-              <p className="text-xs text-muted-foreground">实时检测数据</p>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="p-4 bg-card rounded-md border border-border">
-                <div className="text-2xl font-semibold text-success mb-1">
-                  {result.live.length}
-                </div>
-                <div className="text-xs text-muted-foreground">有效账号</div>
-              </div>
-              <div className="p-4 bg-card rounded-md border border-border">
-                <div className="text-2xl font-semibold text-destructive mb-1">
-                  {result.dead.length}
-                </div>
-                <div className="text-xs text-muted-foreground">无效账号</div>
-              </div>
-            </div>
           </Card>
         </div>
 
