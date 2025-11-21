@@ -126,31 +126,6 @@ const Index = () => {
           </p>
         </div>
 
-        {/* Progress Section - Always visible */}
-        {(isChecking || stats.total > 0) && (
-          <Card className="p-4 mb-6 border-border">
-            <div className="space-y-3">
-              <div className="flex items-center justify-between text-sm">
-                <div className="flex items-center gap-6">
-                  <span className="text-muted-foreground">
-                    进度: {stats.processed} / {stats.total}
-                  </span>
-                  <span className="text-success font-medium">
-                    有效: {result.live.length}
-                  </span>
-                  <span className="text-destructive font-medium">
-                    无效: {result.dead.length}
-                  </span>
-                </div>
-                <span className="font-medium text-foreground">
-                  {Math.round(progress)}%
-                </span>
-              </div>
-              <Progress value={progress} className="h-2" />
-            </div>
-          </Card>
-        )}
-
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           {/* Input Section */}
@@ -184,6 +159,29 @@ const Index = () => {
                 清空
               </Button>
             </div>
+
+            {/* Progress Section */}
+            {(isChecking || stats.total > 0) && (
+              <div className="mt-4 pt-4 border-t border-border space-y-3">
+                <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center gap-6">
+                    <span className="text-muted-foreground">
+                      进度: {stats.processed} / {stats.total}
+                    </span>
+                    <span className="text-success font-medium">
+                      有效: {result.live.length}
+                    </span>
+                    <span className="text-destructive font-medium">
+                      无效: {result.dead.length}
+                    </span>
+                  </div>
+                  <span className="font-medium text-foreground">
+                    {Math.round(progress)}%
+                  </span>
+                </div>
+                <Progress value={progress} className="h-2" />
+              </div>
+            )}
           </Card>
 
           {/* Quick Stats */}
