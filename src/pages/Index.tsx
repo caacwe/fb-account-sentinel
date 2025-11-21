@@ -151,7 +151,7 @@ const Index = () => {
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               placeholder="100012345678901&#10;user_100012345678901&#10;https://facebook.com/100012345678901"
-              className="min-h-[240px] max-h-[300px] font-mono text-xs resize-none mb-4 bg-muted/30"
+              className="min-h-[120px] max-h-[180px] font-mono text-xs resize-none mb-4 bg-muted/30 overflow-y-auto"
             />
             <div className="flex gap-3">
               <Button
