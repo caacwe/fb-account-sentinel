@@ -151,7 +151,7 @@ const Index = () => {
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               placeholder="100012345678901&#10;user_100012345678901&#10;https://facebook.com/100012345678901"
-              className="min-h-[240px] font-mono text-xs resize-none mb-4 bg-muted/30"
+              className="min-h-[240px] max-h-[300px] font-mono text-xs resize-none mb-4 bg-muted/30"
             />
             <div className="flex gap-3">
               <Button
@@ -172,25 +172,27 @@ const Index = () => {
             </div>
 
             {/* Progress Section */}
-            <div className="mt-4 pt-4 border-t border-border space-y-3">
-              <div className="flex items-center justify-between text-sm">
-                <div className="flex items-center gap-6">
-                  <span className="text-muted-foreground">
-                    进度: {stats.processed} / {stats.total}
-                  </span>
-                  <span className="text-success font-medium">
-                    有效: {result.live.length}
-                  </span>
-                  <span className="text-destructive font-medium">
-                    无效: {result.dead.length}
+            {(isChecking || stats.total > 0) && (
+              <div className="mt-4 pt-4 border-t border-border space-y-3">
+                <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center gap-6">
+                    <span className="text-muted-foreground">
+                      进度: {stats.processed} / {stats.total}
+                    </span>
+                    <span className="text-success font-medium">
+                      有效: {result.live.length}
+                    </span>
+                    <span className="text-destructive font-medium">
+                      无效: {result.dead.length}
+                    </span>
+                  </div>
+                  <span className="font-medium text-foreground">
+                    {Math.round(progress)}%
                   </span>
                 </div>
-                <span className="font-medium text-foreground">
-                  {Math.round(progress)}%
-                </span>
+                <Progress value={progress} className="h-2" />
               </div>
-              <Progress value={progress} className="h-2" />
-            </div>
+            )}
           </Card>
         </div>
 
