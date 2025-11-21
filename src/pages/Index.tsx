@@ -172,27 +172,25 @@ const Index = () => {
             </div>
 
             {/* Progress Section */}
-            {(isChecking || stats.total > 0) && (
-              <div className="mt-4 pt-4 border-t border-border space-y-3">
-                <div className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-6">
-                    <span className="text-muted-foreground">
-                      进度: {stats.processed} / {stats.total}
-                    </span>
-                    <span className="text-success font-medium">
-                      有效: {result.live.length}
-                    </span>
-                    <span className="text-destructive font-medium">
-                      无效: {result.dead.length}
-                    </span>
-                  </div>
-                  <span className="font-medium text-foreground">
-                    {Math.round(progress)}%
+            <div className="mt-4 pt-4 border-t border-border space-y-3">
+              <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-6">
+                  <span className="text-muted-foreground">
+                    进度: {stats.processed} / {stats.total}
+                  </span>
+                  <span className="text-success font-medium">
+                    有效: {result.live.length}
+                  </span>
+                  <span className="text-destructive font-medium">
+                    无效: {result.dead.length}
                   </span>
                 </div>
-                <Progress value={progress} className="h-2" />
+                <span className="font-medium text-foreground">
+                  {Math.round(progress)}%
+                </span>
               </div>
-            )}
+              <Progress value={progress} className="h-2" />
+            </div>
           </Card>
         </div>
 
