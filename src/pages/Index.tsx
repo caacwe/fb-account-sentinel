@@ -55,7 +55,7 @@ const Index = () => {
 
   const handleCheck = async () => {
     if (!inputValue.trim()) {
-      toast.error("请输入至少一个用户 ID");
+      toast.error("请先输入要检测的账号哦 😊");
       return;
     }
 
@@ -67,7 +67,7 @@ const Index = () => {
       .filter((item, index, self) => item && self.indexOf(item) === index) as string[];
 
     if (ids.length === 0) {
-      toast.error("未找到有效的 14 位数字 ID");
+      toast.error("没有找到有效的账号 ID，请检查格式后再试 🔍");
       return;
     }
 
@@ -79,7 +79,7 @@ const Index = () => {
     const newResult: CheckResult = { live: [], dead: [] };
     let processed = 0;
 
-    toast.success(`开始检测 ${ids.length} 个账号`);
+    toast.success(`正在为您检测 ${ids.length} 个账号，请稍候... ⏳`);
 
     for (const uid of ids) {
       const isLive = await checkLive(uid);
@@ -95,7 +95,7 @@ const Index = () => {
     }
 
     setIsChecking(false);
-    toast.success("检测完成");
+    toast.success(`检测完成！共找到 ${newResult.live.length} 个有效账号 ✅`);
   };
 
   const handleClear = () => {
@@ -103,16 +103,16 @@ const Index = () => {
     setResult({ live: [], dead: [] });
     setProgress(0);
     setStats({ processed: 0, total: 0 });
-    toast.success("已清除所有数据");
+    toast.success("已清空，可以开始新的检测了 🆕");
   };
 
   const copyToClipboard = (text: string, type: string) => {
     if (!text) {
-      toast.error(`没有可复制的${type}账号`);
+      toast.error(`暂时还没有${type}账号可以复制哦 📋`);
       return;
     }
     navigator.clipboard.writeText(text);
-    toast.success(`${type}账号已复制`);
+    toast.success(`已复制 ${text.split('\n').length} 个${type}账号 📋`);
   };
 
   return (

@@ -109,3 +109,22 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  /* Custom Toast Styles */
+  [data-sonner-toast] {
+    @apply shadow-lg backdrop-blur-sm;
+  }
+  
+  [data-sonner-toast][data-type="success"] {
+    @apply bg-success/10 border-success/20 text-success-foreground;
+  }
+  
+  [data-sonner-toast][data-type="error"] {
+    @apply bg-destructive/10 border-destructive/20 text-destructive-foreground;
+  }
+  
+  [data-sonner-toast][data-icon] {
+    @apply scale-110;
+  }
+}
