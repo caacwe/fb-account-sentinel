@@ -3,7 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
+import { AlertTriangle } from "lucide-react";
 import axios from "axios";
 
 interface CheckResult {
@@ -117,7 +119,7 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-6">
           <h1 className="text-2xl font-semibold text-foreground mb-1">
             Facebook 账号检测
           </h1>
@@ -125,6 +127,15 @@ const Index = () => {
             批量验证账号状态，自动提取14位数字
           </p>
         </div>
+
+        {/* Warning Alert */}
+        <Alert className="mb-6 border-yellow-600/20 bg-yellow-50 dark:bg-yellow-950/20">
+          <AlertTriangle className="h-4 w-4 text-yellow-600" />
+          <AlertDescription className="text-sm text-yellow-800 dark:text-yellow-200">
+            <span className="font-medium">重要提示：</span>
+            请确保已开启代理（梯子）访问，否则检测结果可能不准确
+          </AlertDescription>
+        </Alert>
 
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
