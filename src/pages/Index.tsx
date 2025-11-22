@@ -74,55 +74,70 @@ const Index = () => {
       return;
     }
 
-    const ids = inputValue
-      .split("\n")
-      .map((item) => item.trim())
-      .filter((item) => item.length)
-      .map((item) => extractId(item))
-      .filter((item, index, self) => item && self.indexOf(item) === index) as string[];
-
-    if (ids.length === 0) {
-      toast.error("没有找到有效的账号 ID，请检查格式后再试 🔍");
-      return;
-    }
-
+    // 立即设置加载状态，避免延迟感
     setIsChecking(true);
     setResult({ live: [], dead: [] });
     setProgress(0);
-    setStats({ processed: 0, total: ids.length });
 
-    const newResult: CheckResult = { live: [], dead: [] };
-    let processed = 0;
+    // 使用 setTimeout 让 UI 先更新
+    setTimeout(async () => {
+      const lines = inputValue
+        .split("\n")
+        .map((item) => item.trim())
+        .filter((item) => item.length);
 
-    toast.success(`正在为您检测 ${ids.length} 个账号，请稍候... ⏳`);
-
-    // 5线程并发检测
-    const concurrency = 5;
-    for (let i = 0; i < ids.length; i += concurrency) {
-      const batch = ids.slice(i, i + concurrency);
-      const results = await Promise.all(
-        batch.map(async (uid) => ({
-          uid,
-          isLive: await checkLive(uid),
-        }))
-      );
-
-      results.forEach(({ uid, isLive }) => {
-        if (isLive) {
-          newResult.live.push(uid);
-        } else {
-          newResult.dead.push(uid);
+      // 提取 ID 并使用 Set 去重（性能更好）
+      const idSet = new Set<string>();
+      for (const line of lines) {
+        const id = extractId(line);
+        if (id) {
+          idSet.add(id);
         }
-      });
+      }
 
-      processed += batch.length;
-      setProgress((processed / ids.length) * 100);
-      setStats({ processed, total: ids.length });
-      setResult({ ...newResult });
-    }
+      const ids = Array.from(idSet);
 
-    setIsChecking(false);
-    toast.success(`检测完成！共找到 ${newResult.live.length} 个有效账号 ✅`);
+      if (ids.length === 0) {
+        setIsChecking(false);
+        toast.error("没有找到有效的账号 ID，请检查格式后再试 🔍");
+        return;
+      }
+
+      setStats({ processed: 0, total: ids.length });
+
+      const newResult: CheckResult = { live: [], dead: [] };
+      let processed = 0;
+
+      toast.success(`正在为您检测 ${ids.length} 个账号，请稍候... ⏳`);
+
+      // 5线程并发检测
+      const concurrency = 5;
+      for (let i = 0; i < ids.length; i += concurrency) {
+        const batch = ids.slice(i, i + concurrency);
+        const results = await Promise.all(
+          batch.map(async (uid) => ({
+            uid,
+            isLive: await checkLive(uid),
+          }))
+        );
+
+        results.forEach(({ uid, isLive }) => {
+          if (isLive) {
+            newResult.live.push(uid);
+          } else {
+            newResult.dead.push(uid);
+          }
+        });
+
+        processed += batch.length;
+        setProgress((processed / ids.length) * 100);
+        setStats({ processed, total: ids.length });
+        setResult({ ...newResult });
+      }
+
+      setIsChecking(false);
+      toast.success(`检测完成！共找到 ${newResult.live.length} 个有效账号 ✅`);
+    }, 0);
   };
 
   const handleClear = () => {
@@ -171,7 +186,7 @@ const Index = () => {
             <div className="mb-4">
               <h2 className="text-sm font-medium text-foreground mb-1">输入 ID</h2>
               <p className="text-xs text-muted-foreground">
-                每行一个 ID，支持多种格式（最多 {MAX_IDS.toLocaleString()} 个）
+                每行一个 ID，支持多种格式
               </p>
             </div>
             <Textarea
