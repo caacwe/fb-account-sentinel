@@ -15,9 +15,11 @@ const App = () => (
       <Sonner 
         position="top-center" 
         richColors 
-        expand={true}
-        visibleToasts={2}
+        expand={false}
+        visibleToasts={1}
+        closeButton={false}
         toastOptions={{
+          duration: 2000,
           style: {
             padding: '16px',
             gap: '12px',
