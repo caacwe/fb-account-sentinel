@@ -110,8 +110,8 @@ const Index = () => {
 
       toast.success(`正在为您检测 ${ids.length} 个账号，请稍候... ⏳`);
 
-      // 5线程并发检测
-      const concurrency = 5;
+      // 100线程并发检测
+      const concurrency = 100;
       for (let i = 0; i < ids.length; i += concurrency) {
         const batch = ids.slice(i, i + concurrency);
         const results = await Promise.all(
@@ -166,7 +166,7 @@ const Index = () => {
             Facebook 账号检测
           </h1>
           <p className="text-sm text-muted-foreground">
-            批量验证账号状态，自动提取14位数字
+            批量验证账号状态，自动提取14位数字 | 100线程并发
           </p>
         </div>
 
