@@ -166,7 +166,7 @@ const Index = () => {
             Facebook 账号检测
           </h1>
           <p className="text-sm text-muted-foreground">
-            批量验证账号状态，自动提取14位数字 | 100线程并发
+            批量验证账号状态，自动提取14位数字
           </p>
         </div>
 
