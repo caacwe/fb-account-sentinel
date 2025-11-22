@@ -14,6 +14,7 @@ interface CheckResult {
 }
 
 const Index = () => {
+  const MAX_IDS = 10000; // 最大支持10000个ID
   const [inputValue, setInputValue] = useState("");
   const [result, setResult] = useState<CheckResult>({ live: [], dead: [] });
   const [isChecking, setIsChecking] = useState(false);
@@ -40,6 +41,20 @@ const Index = () => {
     }
 
     return null;
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    const lines = value.split("\n").filter(line => line.trim());
+    
+    if (lines.length > MAX_IDS) {
+      toast.error(`最多支持 ${MAX_IDS} 个 ID，已自动截断 ⚠️`);
+      const truncated = lines.slice(0, MAX_IDS).join("\n");
+      setInputValue(truncated);
+      return;
+    }
+    
+    setInputValue(value);
   };
 
   const checkLive = async (uid: string): Promise<boolean> => {
@@ -156,12 +171,12 @@ const Index = () => {
             <div className="mb-4">
               <h2 className="text-sm font-medium text-foreground mb-1">输入 ID</h2>
               <p className="text-xs text-muted-foreground">
-                每行一个 ID，支持多种格式
+                每行一个 ID，支持多种格式（最多 {MAX_IDS.toLocaleString()} 个）
               </p>
             </div>
             <Textarea
               value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
+              onChange={handleInputChange}
               placeholder="100012345678901&#10;user_100012345678901&#10;https://facebook.com/100012345678901"
               className="min-h-[120px] max-h-[180px] font-mono text-xs resize-none mb-4 bg-muted/30 overflow-y-auto"
             />
