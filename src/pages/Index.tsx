@@ -111,7 +111,7 @@ const Index = () => {
       toast.success(`正在为您检测 ${ids.length} 个账号，请稍候... ⏳`);
 
       // 100线程并发检测
-      const concurrency = 100;
+      const concurrency = 10;
       for (let i = 0; i < ids.length; i += concurrency) {
         const batch = ids.slice(i, i + concurrency);
         const results = await Promise.all(
