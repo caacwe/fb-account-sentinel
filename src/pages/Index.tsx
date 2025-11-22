@@ -166,7 +166,7 @@ const Index = () => {
             Facebook 账号检测
           </h1>
           <p className="text-sm text-muted-foreground">
-            批量验证账号状态，自动提取14位数字
+            在输入框内输入Facebook账号UID，每行一个UID，点击开始检测按钮就可以检测账号是否存活，部分账号被锁定也会检测为死，解锁后可恢复账号状态，检测供参考，具体请登录账号查看状态。
           </p>
         </div>
 
