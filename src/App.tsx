@@ -16,6 +16,7 @@ const App = () => (
         position="top-center" 
         richColors 
         expand={true}
+        visibleToasts={2}
         toastOptions={{
           style: {
             padding: '16px',
