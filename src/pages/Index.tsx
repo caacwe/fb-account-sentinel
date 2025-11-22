@@ -4,8 +4,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { toast } from "@/hooks/use-smart-toast";
-import { AlertTriangle } from "lucide-react";
+
+import { AlertTriangle, CheckCircle2, XCircle, Copy, Check } from "lucide-react";
 import axios from "axios";
 
 interface CheckResult {
@@ -20,6 +20,9 @@ const Index = () => {
   const [isChecking, setIsChecking] = useState(false);
   const [progress, setProgress] = useState(0);
   const [stats, setStats] = useState({ processed: 0, total: 0 });
+  const [statusMessage, setStatusMessage] = useState<{ type: 'error' | 'success' | 'info' | null, text: string }>({ type: null, text: '' });
+  const [copiedLive, setCopiedLive] = useState(false);
+  const [copiedDead, setCopiedDead] = useState(false);
 
   const extractId = (text: string): string | null => {
     const matches = text.match(/\d+/g);
@@ -48,12 +51,13 @@ const Index = () => {
     const lines = value.split("\n").filter(line => line.trim());
     
     if (lines.length > MAX_IDS) {
-      toast.error(`最多支持 ${MAX_IDS} 个 ID，已自动截断 ⚠️`);
+      setStatusMessage({ type: 'error', text: `最多支持 ${MAX_IDS} 个 ID，已自动截断` });
       const truncated = lines.slice(0, MAX_IDS).join("\n");
       setInputValue(truncated);
       return;
     }
     
+    setStatusMessage({ type: null, text: '' });
     setInputValue(value);
   };
 
@@ -70,12 +74,13 @@ const Index = () => {
 
   const handleCheck = async () => {
     if (!inputValue.trim()) {
-      toast.error("请先输入要检测的账号哦 😊");
+      setStatusMessage({ type: 'error', text: '请先输入要检测的账号' });
       return;
     }
 
     // 立即设置加载状态，避免延迟感
     setIsChecking(true);
+    setStatusMessage({ type: null, text: '' });
     setResult({ live: [], dead: [] });
     setProgress(0);
 
@@ -99,16 +104,15 @@ const Index = () => {
 
       if (ids.length === 0) {
         setIsChecking(false);
-        toast.error("没有找到有效的账号 ID，请检查格式后再试 🔍");
+        setStatusMessage({ type: 'error', text: '没有找到有效的账号 ID' });
         return;
       }
 
       setStats({ processed: 0, total: ids.length });
+      setStatusMessage({ type: 'info', text: `正在检测 ${ids.length} 个账号` });
 
       const newResult: CheckResult = { live: [], dead: [] };
       let processed = 0;
-
-      toast.success(`正在为您检测 ${ids.length} 个账号，请稍候... ⏳`);
 
       // 100线程并发检测
       const concurrency = 10;
@@ -136,7 +140,7 @@ const Index = () => {
       }
 
       setIsChecking(false);
-      toast.success(`检测完成！共找到 ${newResult.live.length} 个有效账号 ✅`);
+      setStatusMessage({ type: 'success', text: `检测完成，找到 ${newResult.live.length} 个有效账号` });
     }, 0);
   };
 
@@ -145,16 +149,21 @@ const Index = () => {
     setResult({ live: [], dead: [] });
     setProgress(0);
     setStats({ processed: 0, total: 0 });
-    toast.success("已清空，可以开始新的检测了 🆕");
+    setStatusMessage({ type: null, text: '' });
   };
 
-  const copyToClipboard = (text: string, type: string) => {
-    if (!text) {
-      toast.error(`暂时还没有${type}账号可以复制哦 📋`);
-      return;
+  const copyToClipboard = async (text: string, type: 'live' | 'dead') => {
+    if (!text) return;
+    
+    await navigator.clipboard.writeText(text);
+    
+    if (type === 'live') {
+      setCopiedLive(true);
+      setTimeout(() => setCopiedLive(false), 2000);
+    } else {
+      setCopiedDead(true);
+      setTimeout(() => setCopiedDead(false), 2000);
     }
-    navigator.clipboard.writeText(text);
-    toast.success(`已复制 ${text.split('\n').length} 个${type}账号 📋`);
   };
 
   return (
@@ -175,21 +184,10 @@ const Index = () => {
         <Card className="mb-4 shadow-sm animate-slide-up hover-lift">
           <div className="p-4">
             <p className="text-sm text-muted-foreground leading-relaxed">
-              在输入框内输入Facebook账号UID，每行一个UID，点击开始检测按钮就可以检测账号是否存活，部分账号被锁定也会检测为死，解锁后可恢复账号状态，检测供参考，具体请登录账号查看状态。
+              在输入框内输入Facebook账号UID，每行一个UID，点击开始检测按钮就可以检测账号是否存活，部分账号被锁定也会检测为死，解锁后可恢复账号状态，检测供参考，具体请登录账号查看状态。请开启代理访问以确保检测准确。
             </p>
           </div>
         </Card>
-
-        {/* Compact Side Warning */}
-        <div className="mb-4 animate-slide-up" style={{ animationDelay: '0.1s' }}>
-          <div className="flex items-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-950/20 border-l-4 border-l-primary rounded-r-lg shadow-sm">
-            <AlertTriangle className="h-3.5 w-3.5 text-primary flex-shrink-0" />
-            <p className="text-xs text-foreground">
-              <span className="font-semibold">提示：</span>
-              请开启代理访问以确保检测准确
-            </p>
-          </div>
-        </div>
 
         {/* Main Content Grid */}
         <div className="mb-4">
@@ -206,8 +204,23 @@ const Index = () => {
                 value={inputValue}
                 onChange={handleInputChange}
                 placeholder="100012345678901&#10;user_100012345678901&#10;https://facebook.com/100012345678901"
-                className="min-h-[140px] max-h-[200px] font-mono text-sm resize-none mb-4 border-border overflow-y-auto rounded-lg"
+                className="min-h-[140px] max-h-[200px] font-mono text-sm resize-none mb-3 border-border overflow-y-auto rounded-lg"
               />
+              
+              {/* Status Message */}
+              {statusMessage.type && (
+                <div className={`flex items-center gap-2 px-3 py-2 mb-3 rounded-lg text-sm font-medium animate-scale-in ${
+                  statusMessage.type === 'error' ? 'bg-destructive/10 text-destructive' :
+                  statusMessage.type === 'success' ? 'bg-success/10 text-success' :
+                  'bg-primary/10 text-primary'
+                }`}>
+                  {statusMessage.type === 'error' ? <XCircle className="h-4 w-4 flex-shrink-0" /> :
+                   statusMessage.type === 'success' ? <CheckCircle2 className="h-4 w-4 flex-shrink-0" /> :
+                   <AlertTriangle className="h-4 w-4 flex-shrink-0" />}
+                  <span>{statusMessage.text}</span>
+                </div>
+              )}
+              
               <div className="flex gap-2">
                 <Button
                   onClick={handleCheck}
@@ -270,11 +283,22 @@ const Index = () => {
                 </div>
                 <Button
                   size="sm"
-                  variant="outline"
-                  onClick={() => copyToClipboard(result.live.join("\n"), "有效")}
+                  variant={copiedLive ? "default" : "outline"}
+                  onClick={() => copyToClipboard(result.live.join("\n"), "live")}
+                  disabled={!result.live.length}
                   className="h-8 text-xs font-semibold transition-all duration-200 hover:scale-105 active:scale-95"
                 >
-                  复制全部
+                  {copiedLive ? (
+                    <>
+                      <Check className="h-3 w-3 mr-1" />
+                      已复制
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-3 w-3 mr-1" />
+                      复制
+                    </>
+                  )}
                 </Button>
               </div>
             </div>
@@ -300,11 +324,22 @@ const Index = () => {
                 </div>
                 <Button
                   size="sm"
-                  variant="outline"
-                  onClick={() => copyToClipboard(result.dead.join("\n"), "无效")}
+                  variant={copiedDead ? "default" : "outline"}
+                  onClick={() => copyToClipboard(result.dead.join("\n"), "dead")}
+                  disabled={!result.dead.length}
                   className="h-8 text-xs font-semibold transition-all duration-200 hover:scale-105 active:scale-95"
                 >
-                  复制全部
+                  {copiedDead ? (
+                    <>
+                      <Check className="h-3 w-3 mr-1" />
+                      已复制
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-3 w-3 mr-1" />
+                      复制
+                    </>
+                  )}
                 </Button>
               </div>
             </div>
