@@ -11,19 +11,20 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster 
-        position="top-center" 
+        position="bottom-right" 
         richColors 
         expand={false}
-        visibleToasts={1}
+        visibleToasts={3}
         closeButton={false}
         toastOptions={{
           duration: 3000,
           style: {
-            padding: '16px',
-            gap: '12px',
-            borderRadius: '12px',
-            fontSize: '14px',
+            padding: '12px 16px',
+            gap: '8px',
+            borderRadius: '8px',
+            fontSize: '13px',
             fontWeight: '500',
+            minWidth: '280px',
           },
         }}
       />

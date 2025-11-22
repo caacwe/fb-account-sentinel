@@ -159,106 +159,122 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-semibold text-foreground mb-1">
-            Facebook 账号检测
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            在输入框内输入Facebook账号UID，每行一个UID，点击开始检测按钮就可以检测账号是否存活，部分账号被锁定也会检测为死，解锁后可恢复账号状态，检测供参考，具体请登录账号查看状态。
-          </p>
+      {/* Facebook-style Header */}
+      <header className="bg-card border-b border-border sticky top-0 z-10 shadow-sm animate-fade-in">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex items-center h-14">
+            <h1 className="text-xl font-bold text-primary">
+              Facebook 账号检测工具
+            </h1>
+          </div>
+        </div>
+      </header>
+
+      <div className="max-w-5xl mx-auto px-4 py-6">
+        {/* Description Card */}
+        <Card className="mb-4 shadow-sm animate-slide-up hover-lift">
+          <div className="p-4">
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              在输入框内输入Facebook账号UID，每行一个UID，点击开始检测按钮就可以检测账号是否存活，部分账号被锁定也会检测为死，解锁后可恢复账号状态，检测供参考，具体请登录账号查看状态。
+            </p>
+          </div>
+        </Card>
+
+        {/* Compact Side Warning */}
+        <div className="mb-4 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+          <div className="flex items-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-950/20 border-l-4 border-l-primary rounded-r-lg shadow-sm">
+            <AlertTriangle className="h-3.5 w-3.5 text-primary flex-shrink-0" />
+            <p className="text-xs text-foreground">
+              <span className="font-semibold">提示：</span>
+              请开启代理访问以确保检测准确
+            </p>
+          </div>
         </div>
 
-        {/* Warning Alert */}
-        <Alert className="mb-6 border-yellow-600/20 bg-yellow-50 dark:bg-yellow-950/20">
-          <AlertTriangle className="h-4 w-4 text-yellow-600" />
-          <AlertDescription className="text-sm text-yellow-800 dark:text-yellow-200">
-            <span className="font-medium">重要提示：</span>
-            请确保已开启代理（梯子）访问，否则检测结果可能不准确
-          </AlertDescription>
-        </Alert>
-
         {/* Main Content Grid */}
-        <div className="mb-6">
+        <div className="mb-4">
           {/* Input Section */}
-          <Card className="p-5 border-border">
-            <div className="mb-4">
-              <h2 className="text-sm font-medium text-foreground mb-1">输入 ID</h2>
+          <Card className="shadow-sm hover-lift animate-slide-up" style={{ animationDelay: '0.2s' }}>
+            <div className="p-4 border-b border-border bg-muted/30">
+              <h2 className="text-base font-semibold text-foreground mb-1">输入账号 ID</h2>
               <p className="text-xs text-muted-foreground">
                 每行一个 ID，支持多种格式
               </p>
             </div>
-            <Textarea
-              value={inputValue}
-              onChange={handleInputChange}
-              placeholder="100012345678901&#10;user_100012345678901&#10;https://facebook.com/100012345678901"
-              className="min-h-[120px] max-h-[180px] font-mono text-xs resize-none mb-4 bg-muted/30 overflow-y-auto"
-            />
-            <div className="flex gap-3">
-              <Button
-                onClick={handleCheck}
-                disabled={isChecking}
-                className="flex-1"
-              >
-                {isChecking ? "检测中..." : "开始检测"}
-              </Button>
-              <Button
-                onClick={handleClear}
-                variant="outline"
-                disabled={isChecking}
-                className="px-6"
-              >
-                清空
-              </Button>
+            <div className="p-4">
+              <Textarea
+                value={inputValue}
+                onChange={handleInputChange}
+                placeholder="100012345678901&#10;user_100012345678901&#10;https://facebook.com/100012345678901"
+                className="min-h-[140px] max-h-[200px] font-mono text-sm resize-none mb-4 border-border overflow-y-auto rounded-lg"
+              />
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleCheck}
+                  disabled={isChecking}
+                  className="flex-1 font-semibold shadow-sm transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                  size="lg"
+                >
+                  {isChecking ? "检测中..." : "开始检测"}
+                </Button>
+                <Button
+                  onClick={handleClear}
+                  variant="outline"
+                  disabled={isChecking}
+                  className="px-8 font-semibold transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                  size="lg"
+                >
+                  清空
+                </Button>
+              </div>
             </div>
 
             {/* Progress Section */}
             {(isChecking || stats.total > 0) && (
-              <div className="mt-4 pt-4 border-t border-border space-y-3">
+              <div className="px-4 pb-4 space-y-3 animate-scale-in">
                 <div className="flex items-center justify-between text-sm">
                   <div className="flex items-center gap-6">
-                    <span className="text-muted-foreground">
+                    <span className="text-muted-foreground font-medium transition-all duration-300">
                       进度: {stats.processed} / {stats.total}
                     </span>
-                    <span className="text-success font-medium">
+                    <span className="text-success font-semibold transition-all duration-300">
                       有效: {result.live.length}
                     </span>
-                    <span className="text-destructive font-medium">
+                    <span className="text-destructive font-semibold transition-all duration-300">
                       无效: {result.dead.length}
                     </span>
                   </div>
-                  <span className="font-medium text-foreground">
+                  <span className="font-bold text-primary text-base transition-all duration-300">
                     {Math.round(progress)}%
                   </span>
                 </div>
-                <Progress value={progress} className="h-2" />
+                <Progress value={progress} className="h-2.5 transition-all duration-300" />
               </div>
             )}
           </Card>
         </div>
 
         {/* Results Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Live Results */}
-          <Card className="border-border">
-            <div className="p-4 border-b border-border bg-success/5">
+          <Card className="shadow-sm hover-lift animate-slide-up" style={{ animationDelay: '0.3s' }}>
+            <div className="p-4 border-b border-border bg-green-50 dark:bg-green-950/20">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-medium text-foreground">
+                  <h3 className="text-base font-semibold text-foreground">
                     有效账号
                   </h3>
-                  <span className="text-xs text-muted-foreground">
-                    ({result.live.length})
+                  <span className="px-2 py-0.5 bg-success text-success-foreground rounded-full text-xs font-semibold transition-all duration-300">
+                    {result.live.length}
                   </span>
                 </div>
                 <Button
                   size="sm"
                   variant="outline"
                   onClick={() => copyToClipboard(result.live.join("\n"), "有效")}
-                  className="h-7 text-xs"
+                  className="h-8 text-xs font-semibold transition-all duration-200 hover:scale-105 active:scale-95"
                 >
-                  复制
+                  复制全部
                 </Button>
               </div>
             </div>
@@ -266,29 +282,29 @@ const Index = () => {
               value={result.live.join("\n")}
               readOnly
               placeholder="有效的用户 ID 将显示在这里..."
-              className="min-h-[300px] font-mono text-xs resize-none border-0 rounded-t-none bg-muted/20"
+              className="min-h-[320px] font-mono text-sm resize-none border-0 rounded-t-none bg-card transition-all duration-200"
             />
           </Card>
 
           {/* Dead Results */}
-          <Card className="border-border">
-            <div className="p-4 border-b border-border bg-destructive/5">
+          <Card className="shadow-sm hover-lift animate-slide-up" style={{ animationDelay: '0.4s' }}>
+            <div className="p-4 border-b border-border bg-red-50 dark:bg-red-950/20">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-medium text-foreground">
+                  <h3 className="text-base font-semibold text-foreground">
                     无效账号
                   </h3>
-                  <span className="text-xs text-muted-foreground">
-                    ({result.dead.length})
+                  <span className="px-2 py-0.5 bg-destructive text-destructive-foreground rounded-full text-xs font-semibold transition-all duration-300">
+                    {result.dead.length}
                   </span>
                 </div>
                 <Button
                   size="sm"
                   variant="outline"
                   onClick={() => copyToClipboard(result.dead.join("\n"), "无效")}
-                  className="h-7 text-xs"
+                  className="h-8 text-xs font-semibold transition-all duration-200 hover:scale-105 active:scale-95"
                 >
-                  复制
+                  复制全部
                 </Button>
               </div>
             </div>
@@ -296,7 +312,7 @@ const Index = () => {
               value={result.dead.join("\n")}
               readOnly
               placeholder="无效的用户 ID 将显示在这里..."
-              className="min-h-[300px] font-mono text-xs resize-none border-0 rounded-t-none bg-muted/20"
+              className="min-h-[320px] font-mono text-sm resize-none border-0 rounded-t-none bg-card transition-all duration-200"
             />
           </Card>
         </div>
