@@ -81,14 +81,26 @@ const Index = () => {
 
     toast.success(`正在为您检测 ${ids.length} 个账号，请稍候... ⏳`);
 
-    for (const uid of ids) {
-      const isLive = await checkLive(uid);
-      if (isLive) {
-        newResult.live.push(uid);
-      } else {
-        newResult.dead.push(uid);
-      }
-      processed++;
+    // 5线程并发检测
+    const concurrency = 5;
+    for (let i = 0; i < ids.length; i += concurrency) {
+      const batch = ids.slice(i, i + concurrency);
+      const results = await Promise.all(
+        batch.map(async (uid) => ({
+          uid,
+          isLive: await checkLive(uid),
+        }))
+      );
+
+      results.forEach(({ uid, isLive }) => {
+        if (isLive) {
+          newResult.live.push(uid);
+        } else {
+          newResult.dead.push(uid);
+        }
+      });
+
+      processed += batch.length;
       setProgress((processed / ids.length) * 100);
       setStats({ processed, total: ids.length });
       setResult({ ...newResult });
